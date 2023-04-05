@@ -1,16 +1,17 @@
-const quiz = require('../repository/model/quiz');
+const { quiz } = require('../repository/database');
 
 module.exports = {
     data: async (req, res) => {
         try {
-            const quiz = await quiz.findAll();
+            const quizez = await quiz.findAll();
             res.status(200).json({
                 status: 200,
                 message: "data successfully sent",
-                quiz: quiz
+                quiz: quizez
             });
         } catch (error) {
             console.error(error.message);
+            console.log(error);
             res.status(500).json({
                 status: 500,
                 message: "Server error.",
@@ -19,7 +20,7 @@ module.exports = {
     },
     index: async (req, res) => {
         try {
-            const quiz = await bab.findOne({
+            const quizez = await quiz.findOne({
                 where: {
                     id: req.params.id,
                 },
@@ -28,8 +29,7 @@ module.exports = {
             res.status(200).json({
                 status: 200,
                 message: "data successfully sent",
-                bab: bab,
-                subbab: subbab,
+                quiz: quizez
             });
         } catch (error) {
             console.error(error);
@@ -40,10 +40,10 @@ module.exports = {
         }
     },
     create: async (req, res) => {
-        const { quiz, a, b, c, d, key, categoryId, LevelId } = req.body
+        const { question, a, b, c, d, key, categoryId, levelId } = req.body
         try {
             const quizez = await quiz.create({
-                quiz, a, b, c, d, key, categoryId, LevelId
+                question, a, b, c, d, key, categoryId, levelId
             })
 
             if (quizez === 0) {
@@ -65,11 +65,9 @@ module.exports = {
     },
     update: async (req, res) => {
         const { id } = req.params
-        const { quiz, a, b, c, d, key, categoryId, LevelId } = req.body
+        const payload = req.body
         try {
-            const quizez = await quiz.update({
-                quiz, a, b, c, d, key, categoryId, LevelId
-            }, { where: { id } })
+            const quizez = await quiz.update( payload, { where: { id } })
 
             if (quizez === 0) {
                 res.status(400).json({
@@ -77,9 +75,10 @@ module.exports = {
                     data: 'Quiz not updated'
                 })
             }
+            const updated = await quiz.findOne({ where: { id } })
             res.status(201).json({
                 message: 'succes',
-                data: quizez
+                data: updated
             })
         } catch (error) {
             res.status(500).json({

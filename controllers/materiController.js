@@ -1,183 +1,174 @@
-const bab = require("../repository/model/bab");
-const subbab = require("../repository/model/subbab");
-
+const { bab, subbab } = require("../repository/database");
 
 module.exports = {
-  data: async function (req, res) {
-    try {
-      const bab = await bab.findAll();
-      res.status(200).json({
-        status: 200,
-        message: "data successfully sent",
-        bab: bab,
-      });
-    } catch (error) {
-      console.error(error.message);
-      res.status(500).json({
-        status: 500,
-        message: "Server error.",
-      });
-    }
-  },
-  index: async function (req, res) {
-    try {
-      const bab = await bab.findOne({
-        where: {
-          id: req.params.id,
-        },
-      });
-      console.log(bab.id);
-      const subbab = await subbab                                                                                                                                .findAll({
-        where: {
-          belongTo: bab.id,
-        },
-      });
-      res.status(200).json({
-        status: 200,
-        message: "data successfully sent",
-        bab: bab,
-        subbab: subbab,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        status: 500,
-        message: "Server error.",
-      });
-    }
-  },
-  createbab: async function (req, res) {
-    try {
-      var url =
-        req.protocol +
-        "://" +
-        req.get("host") +
-        "/images/" +
-        req.body.imageName;
-      console.log(req.body);
-      const bab = await bab.create({
-        judul: req.body.judul,
-        
-      });
-      res.status(201).json({
-        status: 201,
-        message: "data succesfully created",
-        bab: bab,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        status: 500,
-        message: "Server error.",
-      });
-    }
-  },
-  createSubbab: async function (req, res) {
-    try {
-      const subbab = await subbab.create({
-        judul: req.body.judul,
-        isi: req.body.isi,
-        belongTo: req.body.belongTo,
-      });
-      res.status(201).json({
-        status: 201,
-        message: "data succesfully created",
-        subbab: subbab,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        status: 500,
-        message: "Server error.",
-      });
-    }
-  },
-  updatebab: async function (req, res) {
-    try {
-      var url =
-        req.protocol +
-        "://" +
-        req.get("host") +
-        "/images/" +
-        req.body.imageName;
-      await bab.update(
-        {
-          judul: req.body.judul,
-          imageName: url,
-        },
-        {
-          where: {
-            id: req.params.id,
+  getMateri: async (req, res) => {
+    bab
+      .findAll({
+        include: [
+          {
+            model: subbab,
+            as: "subbab",
           },
-        }
-      );
+        ],
+        exclude: ["createdAt", "updatedAt"],
+      })
+      .then((bab) => {
+        res.status(200).json({
+          status: 200,
+          message: "data successfully sent",
+          bab: bab,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).json({
+          status: 500,
+          message: "Server error.",
+        });
+      });
+  },
+  getMateriById: async (req, res) => {
+    bab
+      .findOne({
+        where: {
+          id: req.params.id,
+        },
+        include: [
+          {
+            model: subbab,
+            as: "subbab",
+          },
+        ],
+      })
+      .then((bab) => {
+        res.status(200).json({
+          status: 200,
+          message: "data successfully sent",
+          bab: bab,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).json({
+          status: 500,
+          message: "Server error.",
+        });
+      });
+  },
+  createMateri: async (req, res) => {
+    const { judul, subjudul, deskripsi, kesimpulan, subbabId } = req.body;
+    bab
+      .create({
+        judul,
+        subjudul,
+        deskripsi,
+        kesimpulan,
+        subbabId: subbabId,
+      })
+      .then((bab) => {
+        res.status(201).json({
+          status: 201,
+          message: "data successfully created",
+          bab: bab,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).json({
+          status: 500,
+          message: "Server error.",
+        });
+      });
+  },
+  createSubab: async (req, res) => {
+    const { judul, isi } = req.body;
+    subbab
+      .create({
+        judul,
+        isi,
+      })
+      .then((subbab) => {
+        res.status(201).json({
+          status: 201,
+          message: "data successfully created",
+          subbab: subbab,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).json({
+          status: 500,
+          message: "Server error.",
+        });
+      });
+  },
+  updateMateri: async (req, res) => {
+    const { judul, subjudul, deskripsi, kesimpulan, subbabId } = req.body;
+    await bab.findByPk(req.params.id)
+    .then((bab) => {
+      bab.judul = judul;
+      bab.subjudul = subjudul;
+      bab.deskripsi = deskripsi;
+      bab.kesimpulan = kesimpulan;
+      bab.subbabId = subbabId;
+      return bab.save();
+    })
+    .then((bab) => {
       res.status(200).json({
         status: 200,
         message: "data successfully updated",
+        data: bab || {},
       });
-    } catch (error) {
+    })
+    .catch((error) => {
       console.error(error);
       res.status(500).json({
         status: 500,
         message: "Server error.",
       });
-    }
-  },
-  updateSubbab: async function (req, res) {
-    try {
-      subbab.update(req.body, {
-        where: {
-          id: req.params.id,
-        },
-      });
+    });
+},
+  updateSubab: async (req, res) => {
+    const { judul, isi } = req.body;
+    await subbab.findByPk(req.params.id)
+    .then((subbab) => {
+      subbab.judul = judul;
+      subbab.isi = isi;
+      return subbab.save();
+    })
+    .then((subbab) => {
       res.status(200).json({
         status: 200,
         message: "data successfully updated",
+        data: subbab || {},
       });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        status: 500,
-        message: "Server error.",
-      });
-    }
+    })
   },
-  deletebab: async function (req, res) {
-    try {
-      await bab.destroy({
-        where: {
-          id: req.params.id,
-        },
-      });
-      res.status(200).json({
-        status: 200,
-        message: "data successfully deleted",
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        status: 500,
-        message: "Server error.",
-      });
-    }
-  },
-  deleteSubbab: async function (req, res) {
-    try {
-      await subbab.destroy({
-        where: {
-          id: req.params.id,
-        },
-      });
-      res.status(200).json({
-        status: 200,
-        message: "data successfully deleted",
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        status: 500,
-        message: "Server error.",
-      });
-    }
+    deleteMateri: async (req, res) => {
+      //delete bab and subbab
+      const { id } = req.params;
+      const babFind = await bab.findByPk(id);
+      if (babFind) {
+        await bab.destroy({
+          where: {
+            id: id,
+          },
+        });
+        await subbab.destroy({
+          where: {
+            id: babFind.subbabId,
+          },
+        });
+        res.status(200).json({
+          status: 200,
+          message: "data successfully deleted",
+        });
+      } else {
+        res.status(404).json({
+          status: 404,
+          message: "data not found",
+        });
+      }
   },
 };
+
