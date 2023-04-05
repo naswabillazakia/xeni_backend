@@ -108,5 +108,5 @@ module.exports = {
                 data: error.message
             })
         }
-    }
+    },
 }
