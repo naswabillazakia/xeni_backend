@@ -1,30 +1,31 @@
-const { Sql, DataTypes } = require("sequelize");
-const database = require("../database");
-
-const bab = database.define("bab", {
-  
-  judul: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  subjudul: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  deskripsi: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  kesimpulan: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-
-});
-
-bab
-  .sync()
-  .then(() => console.log("table created successfully"))
-  .catch((error) => console.log("error creating table: " + error));
+const bab = (sequelize, DataTypes) => {
+  const Bab = sequelize.define('bab', {
+    judul: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    subjudul: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    deskripsi: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    kesimpulan: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    subbabId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      reference : {
+        model: 'subbab',
+        key: 'id',
+      }, 
+    },
+  });
+  return Bab;
+};
 
 module.exports = bab;
