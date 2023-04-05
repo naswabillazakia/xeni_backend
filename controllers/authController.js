@@ -1,127 +1,125 @@
 const { user } = require("../repository/database");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const jwtConfig = require("../config/auth.jwt");
+jwtConifg = require("../config/auth.jwt");
 
 module.exports = {
   register: async (req, res) => {
     const { username, email, password } = req.body;
     try {
       const salt = await bcrypt.genSalt(10);
-      const hashPassword = await bcrypt.hash(password, salt);
+      const hashedPassword = await bcrypt.hash(password, salt);
       const newUser = await user.create({
         username,
         email,
-        password: hashPassword,
+        password: hashedPassword,
       });
+      if (newUser === 0) {
+        res.status(400).json({
+          message: "failed",
+          data: "User not created",
+        });
+      }
       res.status(201).json({
-        status: 201,
-        message: "User successfully created",
-        user: newUser,
+        message: "succes",
+        data: newUser,
       });
     } catch (error) {
-      console.error(error);
+      console.log(error);
       res.status(500).json({
-        status: 500,
-        message: "Server error.",
+        message: "failed",
+        data: `${error}`,
       });
     }
   },
-
-  login: async (req, res, next) => {
-    const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({
-        status: 400,
-        message: "Username or password is empty",
-      });
-    } 
+  login: async (req, res) => {
     try {
-      await user
-        .findOne({
-          where: {
-            username: username,
-          },
-        })
-        .then((user) => {
-          if (!user) {
-            return res.status(400).json({
-              status: 400,
-              message: "Username or password is wrong",
-            });
-          }
+      const userFind = await user.findOne({
+        where: {
+          email: req.body.email,
+        },
+      });
 
-          bcrypt.compare(password, user.password, (err, result) => {
-            if (err) {
-              return res.status(400).json({
-                status: 400,
-                message: "Username or password is wrong",
-              });
-            }
-            if (result) {
-              const token = jwt.sign(
-                {
-                  username: user.username,
-                  email: user.email,
-                },
-                jwtConfig.secret,
-                {
-                  expiresIn: "1h",
-                },
-              );
-
-              req.session.token = token;
-
-              return res.status(200).json({
-                status: 200,
-                message: "Login successfully",
-                token: token,
-              });
-            }
-            return res.status(400).json({
-              status: 400,
-              message: "Username or password is wrong",
-            });
-          });
+      if (!userFind) {
+        res.status(400).json({
+          message: "failed",
+          data: "User not found",
         });
+      }
+
+      const validPassword = await bcrypt.compare(
+        req.body.password,
+        userFind.password
+      );
+      if (validPassword) {
+        const token = jwt.sign({ id: userFind.id }, jwtConifg.secret, { expiresIn: jwtConifg.expiresIn });
+        res.status(200).json({
+          message: "succes",
+          data: {
+            token: token,
+            user: userFind,
+          },
+        });
+      } else {
+        res.status(400).json({
+          message: "failed",
+          data: "Password not valid",
+        });
+      }
     } catch (error) {
-      console.error(error);
+      console.log(error);
       res.status(500).json({
-        status: 500,
-        message: "Server error.",
+        message: "failed",
+        data: `${error}`,
       });
     }
   },
 
   me: async (req, res) => {
-    jwt.verify(req.session.token, jwtConfig.secret, (err, decoded) => {
-      if (err) {
-        return res.status(401).json({
-          status: 401,
-          message: "Unauthorized",
+    const checkToken = req.headers["authorization"];
+    const token = checkToken && checkToken.split(" ")[1];
+    if (!token) {
+      res.status(401).json({
+        message: "failed",
+        data: "Access token not found",
+      });
+    } else {
+      try {
+        const decoded = jwt.verify(token, jwtConifg.secret);
+        const userFind = await user.findOne({
+          where: {
+            id: decoded.id,
+          },
+        });
+        res.status(200).json({
+          message: "succes",
+          data: userFind,
+        });
+      } catch (error) {
+        res.status(403).json({
+          message: "failed",
+          data: "Invalid token",
         });
       }
-      res.status(200).json({
-        status: 200,
-        message: "User successfully get",
-        user: decoded,
-      });
-    });
+    }
   },
 
-  logout : async (req, res) => {
-    jwt.verify(req.session.token, jwtConfig.secret, (err, decoded) => {
-      if (err) {
-        return res.status(401).json({
-          status: 401,
-          message: "Unauthorized",
-        });
-      }
-      req.session.destroy();
-      res.status(200).json({
-        status: 200,
-        message: "Logout successfully",
-      });
-    });
-  },
+    logout: async (req, res) => {
+      try {
+        // get the token from the request header
+        const token = req.headers.authorization.split(' ')[1];
+    
+        // verify the token and get the user id
+        const decoded = jwt.verify(token, jwtConifg.secret);
+        const userId = decoded.userId;
+    
+        // update the user's token in the database
+        await user.update({ token: null }, { where: { id: userId } });
+    
+        res.status(200).send('Logout successful');
+      } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+      }    
+    } 
 };

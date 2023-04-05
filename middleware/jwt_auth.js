@@ -1,25 +1,27 @@
-const jwt = require("jsonwebtoken");
-const jwtConfig = require("../config/auth.jwt");
+const jwt = require('jsonwebtoken');
+const jwtConfig = require('../config/auth.jwt');
 
-module.exports = {
-    verifyToken: (req, res, next) => {
-        let token = req.headers["x-access-token"];
-        if (!token) {
-            return res.status(403).json({
-                status: 403,
-                message: "No token provided"
-            });
-        }
-        jwt.verify(token, jwtConfig.Secret, (err, decoded) => {
-            if (err) {
-                return res.status(401).json({
-                    status: 401,
-                    message: "Unauthorized"
-                });
-            }
-            req.userId = decoded.id;
-            next();
+const verifyJWT = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({
+            message: 'failed',
+            data: 'Access token not found'
         });
-    },
+    }
+
+    try {
+        const decoded = jwt.verify(token, jwtConfig.secret);
+        req.userId = decoded.id;
+        next();
+    } catch (error) {
+        return res.status(403).json({
+            message: 'failed',
+            data: 'Invalid token'
+        });
+    }
 };
 
+module.exports = verifyJWT;
