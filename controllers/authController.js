@@ -1,6 +1,6 @@
 const { user } = require("../repository/database");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 jwtConifg = require("../config/auth.jwt");
 
 module.exports = {
