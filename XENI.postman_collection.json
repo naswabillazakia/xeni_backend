@@ -1,0 +1,206 @@
+{
+	"info": {
+		"_postman_id": "b798953e-4d7d-4f7d-9e2f-9982d29b4008",
+		"name": "XENI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20587302"
+	},
+	"item": [
+		{
+			"name": "GET Quiz",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/api/quiz",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"quiz"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Quiz",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Quiz\": \"Menderita kerugian besar di usaha sehingga gulung tikar\",\r\n    \"a\": \"Banzai\",\r\n    \"b\": \"Bangkrut\",\r\n    \"c\": \"Barbillion\",\r\n    \"d\": \"Barel\",\r\n    \"key\": \"b\",\r\n    \"categoryId\": \"1\",\r\n    \"levelId\": \"easy\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/api/quiz/level/easy",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"quiz",
+						"level",
+						"easy"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Quiz by Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/api/quiz",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"quiz"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Quiz by Level",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/api/quiz/level/medium",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"quiz",
+						"level",
+						"medium"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Quiz by Category",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST JobSheet SumbitOne",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n      \"quizId\" : 1,\r\n      \"answer\" : \"d\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/api/jobsheet/one",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"jobsheet",
+						"one"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Kata",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Kata",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Kata",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE Kata",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
