@@ -1,11 +1,13 @@
-const quizCOntroller = require("../controllers/quizController");
+const quizController = require("../controllers/quizController");
 const router = require("express").Router();
 const verifyJWT  = require("../middleware/jwt_auth");
 
-router.get("/", quizCOntroller.data);
-router.get("/:id", quizCOntroller.index);
-router.post("/", quizCOntroller.create);
-router.put("/:id", quizCOntroller.update);
-router.delete("/:id", quizCOntroller.delete);
+router.get("/", quizController.data);
+router.get("/:id", quizController.index);
+router.get("/category/:id", quizController.getbyCategory);
+router.get("/level/:id", quizController.getbyLevel);
+router.post("/", quizController.create);
+router.put("/:id", quizController.update);
+router.delete("/:id", quizController.delete);
 
 module.exports = router;

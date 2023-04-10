@@ -1,13 +1,13 @@
-const { quiz } = require('../repository/database');
+const { kata } = require('../repository/database');
 
 module.exports = {
     data: async (req, res) => {
         try {
-            const quizez = await quiz.findAll();
+            const katas = await kata.findAll();
             res.status(200).json({
                 status: 200,
                 message: "data successfully sent",
-                quiz: quizez
+                kata: katas
             });
         } catch (error) {
             console.error(error.message);
@@ -20,16 +20,16 @@ module.exports = {
     },
     index: async (req, res) => {
         try {
-            const quizez = await quiz.findOne({
+            const katas = await kata.findOne({
                 where: {
                     id: req.params.id,
                 },
             });
-            console.log(quiz.id);
+            console.log(kata.id);
             res.status(200).json({
                 status: 200,
                 message: "data successfully sent",
-                quiz: quizez
+                kata: katas
             });
         } catch (error) {
             console.error(error);
@@ -40,13 +40,13 @@ module.exports = {
         }
     },
     create: async (req, res) => {
-        const { question, a, b, c, d, key, categoryId, levelId } = req.body
+        const { word, makna } = req.body
         try {
-            const quizez = await quiz.create({
-                question, a, b, c, d, key, categoryId, levelId
+            const katas = await kata.create({
+                word, makna
             })
 
-            if (quizez === 0) {
+            if (katas === 0) {
                 res.status(400).json({
                     message: 'failed',
                     data: 'Quiz not created'
@@ -54,7 +54,7 @@ module.exports = {
             }
             res.status(201).json({
                 message: 'succes',
-                data: quizez
+                data: katas
             })
         } catch (error) {
             res.status(500).json({
@@ -67,15 +67,15 @@ module.exports = {
         const { id } = req.params
         const payload = req.body
         try {
-            const quizez = await quiz.update( payload, { where: { id } })
+            const katas = await kata.update( payload, { where: { id } })
 
-            if (quizez === 0) {
+            if (katas === 0) {
                 res.status(400).json({
                     message: 'failed',
                     data: 'Quiz not updated'
                 })
             }
-            const updated = await quiz.findOne({ where: { id } })
+            const updated = await kata.findOne({ where: { id } })
             res.status(201).json({
                 message: 'succes',
                 data: updated
@@ -90,9 +90,9 @@ module.exports = {
     delete: async (req, res) => {
         const { id } = req.params
         try {
-            const quizez = await quiz.destroy({ where: { id } })
+            const katas = await kata.destroy({ where: { id } })
 
-            if (quizez === 0) {
+            if (katas === 0) {
                 res.status(400).json({
                     message: 'failed',
                     data: 'Quiz not deleted'
@@ -100,7 +100,7 @@ module.exports = {
             }
             res.status(201).json({
                 message: 'succes',
-                data: quizez
+                data: katas
             })
         } catch (error) {
             res.status(500).json({
@@ -109,46 +109,4 @@ module.exports = {
             })
         }
     },
-    getbyCategory: async (req, res) => {
-        try {
-            const quizez = await quiz.findAll({
-                where: {
-                    categoryId: req.params.id,
-                },
-            });
-            console.log(quiz.id);
-            res.status(200).json({
-                status: 200,
-                message: "data successfully sent",
-                quiz: quizez
-            });
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({
-                status: 500,
-                message: "Server error.",
-            });
-        }
-    },
-    getbyLevel: async (req, res) => {
-        try {
-            const quizez = await quiz.findAll({
-                where: {
-                    levelId: req.params.id,
-                },
-            });
-            console.log(quiz.id);
-            res.status(200).json({
-                status: 200,
-                message: "data successfully sent",
-                quiz: quizez
-            });
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({
-                status: 500,
-                message: "Server error.",
-            });
-        }
-    }
 }

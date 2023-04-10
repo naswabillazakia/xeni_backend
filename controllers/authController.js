@@ -5,14 +5,15 @@ jwtConifg = require("../config/auth.jwt");
 
 module.exports = {
   register: async (req, res) => {
-    const { username, email, password } = req.body;
+    const { email, password, confpassword } = req.body;
     try {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
+      const hashedconfPassword = await bcrypt.hash(confpassword, salt);
       const newUser = await user.create({
-        username,
         email,
         password: hashedPassword,
+        confpassword: hashedconfPassword
       });
       if (newUser === 0) {
         res.status(400).json({

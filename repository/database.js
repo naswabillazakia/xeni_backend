@@ -19,14 +19,9 @@ const db = {}
 db.sequelize = sequelize;
 db.sequelize = sequelize;
 
-db.bab = require("./model/bab")(sequelize, Sequelize);
-db.subbab = require("./model/subbab")(sequelize, Sequelize);
+db.kata = require("./model/kata")(sequelize, Sequelize);
 db.quiz = require("./model/quiz")(sequelize, Sequelize);
 db.user = require("./model/user")(sequelize, Sequelize);
-
-//associations between tables
-db.bab.belongsTo(db.subbab, { foreignKey: 'subbabId', onDelete: 'cascade', hooks: true });
-db.subbab.hasMany(db.bab , { foreignKey: 'subbabId', onDelete: 'cascade', hooks: true });
 
 //drop and resync with { force: false }
 db.sequelize.sync({ force: false }).then(() => {

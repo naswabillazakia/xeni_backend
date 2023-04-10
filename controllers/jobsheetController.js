@@ -11,7 +11,7 @@ module.exports = {
             }).then((quizez) => {
                 if (quizez.key === answer) {
                     res.status(200).json({
-                        message: 'jawaban benar',
+                        message: 'benar',
                         data: {
                             score : 1,
                             id,
@@ -20,7 +20,7 @@ module.exports = {
                     })
                 } else {
                     res.status(400).json({
-                        message: 'jawaban salah',
+                        message: 'salah',
                         data: {
                             score : 0,
                             id,
